@@ -1,20 +1,22 @@
-/**
+/*
 TODO
 ・OperatorInfoクラスを作ってoperatorTableを変える
 ・リファクタリング
 */
 package {
-  import flash.display.Sprite;
-  
-  [SWF(width="400", height="300", backgroundColor="#eeffee")] 
-  public class LexicalAnalyzer extends Sprite {
-    private var sourceCode:String;
+  /** レキシカルアナライザ */
+  public class LexicalAnalyzer {
     private var sourceCodeCharArray:Vector.<String>;
     private var currentLineNumber:int;
     private var operatorTable:Object;
     private var keywordTable:Object;
+    public function get lineNumber():int { return currentLineNumber; }
 
-    public function LexicalAnalyzer() {
+    /**
+    コストラクタ
+    @param sourceCode ソースコード
+    */
+    public function LexicalAnalyzer(sourceCode:String) {
       currentLineNumber = 1;
       operatorTable = {
 	"==" : TokenKind.EQ_TOKEN,
@@ -47,59 +49,14 @@ package {
       };
 
       sourceCodeCharArray = new Vector.<String>();
-      try {
-	sourceCode = "if a == 0 print \"hoge\" # This is a comment";
-	for (var i:int = 0; i < sourceCode.length; i++) {
-	  sourceCodeCharArray.push(sourceCode.charAt(i));
-	}
-	sourceCodeCharArray.push("\n");
-	main();
+      for (var i:int = 0; i < sourceCode.length; i++) {
+	sourceCodeCharArray.push(sourceCode.charAt(i));
       }
-      catch (e:Error) {
-	log(e);
-      }
-    }
-
-    private function main():void {
-      var token:Token;
-      currentLineNumber = 1;
-      var n:int = 0;
-      do {
-	token = lexGetToken();
-	if (token.tokenKind == TokenKind.INT_VALUE_TOKEN) {
-	  log(token.intValue + " 整数");
-	}
-	else if (token.tokenKind == TokenKind.IDENTIFIER_TOKEN) {
-	  log(token.identifier + " 識別子");
-	}
-	else if (token.tokenKind == TokenKind.STRING_LITERAL_TOKEN) {
-	  log(token.stringValue + " 文字列リテラル");
-	}
-	else if (token.tokenKind >= TokenKind.EQ_TOKEN && token.tokenKind <= TokenKind.SEMICOLON_TOKEN) {
-	  log(token.tokenKind + " 演算子または区切り子");
-	}
-	else if (token.tokenKind != TokenKind.END_OF_FILE_TOKEN && token.tokenKind >= TokenKind.IF_TOKEN) {
-	  log(keywordTable[token.tokenKind - TokenKind.IF_TOKEN] + " 予約語");
-	}
-
-	/*
-	if (token.tokenKind == TokenKind.END_OF_FILE_TOKEN) {
-	log("EOF");
-	}
-	else {
-	log("TokenKind = " + token.tokenKind);
-	}
-	if (++n > 5) {
-	log("break");
-	break;
-	}
-	*/
-      } while(token.tokenKind != TokenKind.END_OF_FILE_TOKEN);
+      sourceCodeCharArray.push("\n");
     }
 
     private function lexError(message:String):void {
-      log("lex error: " + message);
-      throw new Error("lex error");
+      throw new Error("lex error: " + message);
     }
 
     /**
@@ -130,7 +87,6 @@ package {
 	lexError("Invalid operator " + token);
 	return 0;
       }
-      // log("selectOperator: " + token + " = " + operatorTable[token]);
       return operatorTable[token];
     }
 
@@ -152,18 +108,21 @@ package {
     */
     private function isAlpha(ch:String):Boolean {
       var charCode:Number = ch.charCodeAt(0);
-      // "A".charCodeAt(0) == 65, "Z".charCodeAt(0) == 90
-      // "a".charCodeAt(0) == 97, "z".charCodeAt(0) == 122
+      // "A" = 65, "Z" = 90, "a" = 97, "z" = 122
       return (charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122);
     }
 
     private function isSpace(ch:String):Boolean {
       var charCode:Number = ch.charCodeAt(0);
-      // " " : 32, "\f": 12, "\n": 10, "\r": 13, "\t": 9, "\v": 11
+      // " " = 32, "\f" = 12, "\n" = 10, "\r" = 13, "\t" = 9, "\v" = 11
       return (charCode >= 9 && charCode <= 13) || (charCode == 32);
     }
 
-    private function lexGetToken():Token {
+    /**
+    次のトークンを取得
+    @return トークン
+    */
+    public function lexGetToken():Token {
       var ret:Token = new Token();
       var state:int = LexerState.INITIAL_STATE; // 読み取り中のトークンの種別を保持
       var token:String = "";
@@ -291,6 +250,7 @@ package {
   }
 }
 
+/** 読み取っているトークンの種類 */
 class LexerState {
   public static const INITIAL_STATE:int = 1;
   public static const INT_VALUE_STATE:int = 2;
@@ -299,99 +259,4 @@ class LexerState {
   public static const OPERATOR_STATE:int = 5;
   public static const COMMENT_STATE:int = 6;
 }
-
-class TokenKind {
-  public static const INT_VALUE_TOKEN:int = 1; // 整数
-  public static const IDENTIFIER_TOKEN:int = 2; // 識別子
-  public static const STRING_LITERAL_TOKEN:int = 3; // 文字列
-  public static const EQ_TOKEN:int = 4; // ==
-  public static const NE_TOKEN:int = 5; // !=
-  public static const GE_TOKEN:int = 6; // >=
-  public static const LE_TOKEN:int = 7; // <=
-  public static const ADD_TOKEN:int = 8; // +
-  public static const SUB_TOKEN:int = 9; // -
-  public static const MUL_TOKEN:int = 10; // *
-  public static const DIV_TOKEN:int = 11; // /
-  public static const ASSIGN_TOKEN:int = 12; // =
-  public static const GT_TOKEN:int = 13; // >
-  public static const LT_TOKEN:int = 14; // <
-  public static const LEFT_PAREN_TOKEN:int = 15; // (
-  public static const RIGHT_PAREN_TOKEN:int = 16; // )
-  public static const LEFT_BRACE_TOKEN:int = 17; // {
-  public static const RIGHT_BRACE_TOKEN:int = 18; //  }
-  public static const COMMA_TOKEN:int = 19; // ,
-  public static const SEMICOLON_TOKEN:int = 20; // ;
-  public static const IF_TOKEN:int = 21; // if
-  public static const ELSE_TOKEN:int = 22; // else
-  public static const WHILE_TOKEN:int = 23; // while
-  public static const GOTO_TOKEN:int = 24; // goto
-  public static const GOSUB_TOKEN:int = 25; // gosub
-  public static const RETURN_TOKEN:int = 26; // return
-  public static const PRINT_TOKEN:int = 27; // print
-  public static const END_OF_FILE_TOKEN:int = 28; // EOF 
-}
-
-class Token {
-  private var _kind:int;
-  private var _intValue:int;
-  private var _stringValue:String;
-  private var _identifier:String;
-
-  /**
-  int型の値を表すトークンオブジェクトを作成
-  @param tokenKind トークンの種類(TokenKind)
-  @param intValue 値
-  @return tokenKindとintValueがセットされたトークンオブジェクト
-  */
-  public static function getIntToken(tokenKind:int, intValue:int):Token {
-    var token:Token = new Token();
-    token._kind = tokenKind;
-    token._intValue = intValue;
-    return token;
-  }
-
-  /**
-  String型の値を表すトークンオブジェクトを作成
-  @param tokenKind トークンの種類(TokenKind)
-  @param stringValue 値
-  @return tokenKindとstringValueがセットされたトークンオブジェクト
-  */
-  public static function getStringToken(tokenKind:int, stringValue:String):Token {
-    var token:Token = new Token();
-    token._kind = tokenKind;
-    token._stringValue = stringValue;
-    return token;
-  }
-
-  /**
-  識別子を表すトークンオブジェクトを作成
-  @param tokenKind トークンの種類(TokenKind)
-  @param identifier 値
-  @return tokenKindとidentifierがセットされたトークンオブジェクト
-  */
-  public static function getIdentifierToken(tokenKind:int, identifier:String):Token {
-    var token:Token = new Token();
-    token._kind = tokenKind;
-    token._identifier = identifier
-    return token;
-  }
-
-  public function get tokenKind():int {
-    return _kind;
-  }
-  public function set tokenKind(kind:int):void {
-    _kind = kind;
-  }
-
-  public function get intValue():int {
-    return _intValue;
-  }
-  public function get stringValue():String {
-    return _stringValue;
-  }
-  public function get identifier():String {
-    return _identifier;
-  }
-}
-
 
