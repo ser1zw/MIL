@@ -6,12 +6,13 @@ package {
   [SWF(width="400", height="300", backgroundColor="#eeffee")] 
   public class Main extends Sprite {
     public function Main() {
-      // lexSample();
+      parserSample();
     }
 
     private function parserSample():void {
-      var src:String = "if a == 0 print \"hoge\" # This is a comment";
-      // var parser:Parser = new Parser(src);
+      // var src:String = "if a == 0 print \"hoge\" # This is a comment";
+      var parser:Parser = new Parser("");
+      parser.test();
     }
 
     private function lexSample():void {

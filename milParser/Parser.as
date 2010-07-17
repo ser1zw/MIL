@@ -38,7 +38,7 @@ package milParser {
       lookAheadToken = token;
     }
 
-    private function addBytecode(bytecode:int) {
+    private function addBytecode(bytecode:int):void {
       _bytecode.push(bytecode);
     }
     
@@ -131,12 +131,281 @@ package milParser {
       }
     }
 
+    /** +または-からなる式をパース */
+    private function parseAdditiveExpression():void {
+      var token:Token;
+      parseMultiplicativeExpression();
+      while (true) {
+	token = getToken();
+	if (token.kind != TokenKind.ADD_TOKEN
+	  && token.kind != TokenKind.SUB_TOKEN) {
+	  ungetToken(token);
+	  break;
+	}
+	parseMultiplicativeExpression();
+	if (token.kind == TokenKind.ADD_TOKEN) {
+	  addBytecode(OpCode.OP_ADD);
+	}
+	else {
+	  addBytecode(OpCode.OP_SUB);
+	}
+      }
+    }
+
+    private function parseCompareExpression():void {
+      var token:Token;
+      parseAdditiveExpression();
+      while (true) {
+	token = getToken();
+	if (token.kind != TokenKind.EQ_TOKEN
+	  && token.kind != TokenKind.NE_TOKEN
+	  && token.kind != TokenKind.GT_TOKEN
+	  && token.kind != TokenKind.GE_TOKEN
+	  && token.kind != TokenKind.LT_TOKEN
+	  && token.kind != TokenKind.LE_TOKEN) {
+	  ungetToken(token);
+	  break;
+	}
+	parseAdditiveExpression();
+
+	switch (token.kind) {
+	  case TokenKind.EQ_TOKEN:
+	  addBytecode(OpCode.OP_EQ);
+	  break;
+
+	  case TokenKind.NE_TOKEN:
+	  addBytecode(OpCode.OP_NE);
+	  break;
+
+	  case TokenKind.GT_TOKEN:
+	  addBytecode(OpCode.OP_GT);
+	  break;
+
+	  case TokenKind.GE_TOKEN:
+	  addBytecode(OpCode.OP_GE);
+	  break;
+
+	  case TokenKind.LT_TOKEN:
+	  addBytecode(OpCode.OP_LT);
+	  break;
+
+	  case TokenKind.LE_TOKEN:
+	  addBytecode(OpCode.OP_LE);
+	  break;
+	}
+      }
+    }
+
     private function parseExpression():void {
-      throw new Error("Not implemented yet!!");
+      parseCompareExpression();
+    }
+
+    /**
+    新しいラベルを作成
+    @return ラベルのインデックス
+    */
+    private function getLabel():int {
+      labelTable.push(new Label(null));
+      return labelTable.length - 1;
+    }
+
+    /**
+    ラベルのアドレスをバイトコードの最後尾+1にセット
+    @param labelIndex アドレスをセットするラベルのインデックス
+    */
+    private function setLabel(labelIndex:int):void {
+      labelTable[labelIndex].address = _bytecode.length;
+    }
+
+    private function searchOrNewLabel(label:String):int {
+      var i:int;
+      for (i = 0; i < labelTable.length; i++) {
+	if (labelTable[i] != null && labelTable[i].identifier != null
+	  && labelTable[i].identifier == label) {
+	  return i;
+	}
+      }
+      labelTable.push(new Label(label));
+      return labelTable.length - 1;
+    }
+
+    private function parseIfStatement():void {
+      var token:Token;
+      var elseLabel:int;
+      var endIfLabel:int;
+
+      checkExpectedToken(TokenKind.LEFT_PAREN_TOKEN);
+      parseExpression();
+      checkExpectedToken(TokenKind.RIGHT_PAREN_TOKEN);
+
+      elseLabel = getLabel();
+      addBytecode(OpCode.OP_JUMP_IF_ZERO);
+      addBytecode(elseLabel);
+      parseBlock();
+      token = getToken();
+      if (token.kind == TokenKind.ELSE_TOKEN) {
+	endIfLabel = getLabel();
+	addBytecode(OpCode.OP_JUMP);
+	addBytecode(endIfLabel);
+	setLabel(elseLabel);
+	parseBlock();
+	setLabel(endIfLabel);
+      }
+      else {
+	ungetToken(token);
+	setLabel(elseLabel);
+      }
+    }
+
+    private function parseWhileStatement():void {
+      var loopLabel:int;
+      var endWhileLabel:int;
+
+      loopLabel = getLabel();
+      setLabel(loopLabel);
+      checkExpectedToken(TokenKind.LEFT_PAREN_TOKEN);
+      parseExpression();
+      checkExpectedToken(TokenKind.RIGHT_PAREN_TOKEN);
+
+      endWhileLabel = getLabel();
+      addBytecode(OpCode.OP_JUMP_IF_ZERO);
+      addBytecode(endWhileLabel);
+      parseBlock();
+      addBytecode(OpCode.OP_JUMP);
+      addBytecode(loopLabel);
+      setLabel(endWhileLabel);
+    }
+
+    private function parsePrintStatement():void {
+      checkExpectedToken(TokenKind.LEFT_PAREN_TOKEN);
+      parseExpression();
+      checkExpectedToken(TokenKind.RIGHT_PAREN_TOKEN);
+      addBytecode(OpCode.OP_PRINT);
+      checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
+    }
+
+    private function parseAssignStatement(identifier:String):void {
+      var varIndex:int = searchOrNewLabel(identifier);
+      checkExpectedToken(TokenKind.ASSIGN_TOKEN);
+      parseExpression();
+      addBytecode(OpCode.OP_ASSIGN_TO_VAR);
+      addBytecode(varIndex);
+      checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
+    }
+
+    private function parseGotoStatement():void {
+      var token:Token;
+      var label:int;
+
+      checkExpectedToken(TokenKind.MUL_TOKEN);
+      token = getToken();
+      if (token.kind != TokenKind.IDENTIFIER_TOKEN) {
+	parseError("label identifier expected");
+      }
+      label = searchOrNewLabel(token.identifier);
+      addBytecode(OpCode.OP_JUMP);
+      addBytecode(label);
+      checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
+    }
+
+    private function parseGosubStatement():void {
+      var token:Token;
+      var label:int;
+
+      checkExpectedToken(TokenKind.MUL_TOKEN);
+      token = getToken();
+      if (token.kind != TokenKind.IDENTIFIER_TOKEN) {
+	parseError("label identifier expected");
+      }
+      label = searchOrNewLabel(token.identifier);
+      addBytecode(OpCode.OP_GOSUB);
+      addBytecode(label);
+      checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
+    }
+
+    private function parseLabelStatement():void {
+      var token:Token;
+      var label:int;
+
+      token = getToken();
+      if (token.kind != TokenKind.IDENTIFIER_TOKEN) {
+	parseError("label identifier expected");
+      }
+      label = searchOrNewLabel(token.identifier);
+      setLabel(label);
+    }
+
+    private function parseReturnStatement():void {
+      addBytecode(OpCode.OP_RETURN);
+      checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
+    }
+
+    /** トークンを読み取り種別ごとに分岐 */
+    private function parseStatement():void {
+      var token:Token = getToken();
+      
+      switch (token.kind) {
+	case TokenKind.IF_TOKEN:
+	parseIfStatement();
+	break;
+
+	case TokenKind.WHILE_TOKEN:
+	parseWhileStatement();
+	break;
+
+	case TokenKind.PRINT_TOKEN:
+	parsePrintStatement();
+	break;
+
+	case TokenKind.GOTO_TOKEN:
+	parseGotoStatement();
+	break;
+
+	case TokenKind.GOSUB_TOKEN:
+	parseGosubStatement();
+	break;
+
+	case TokenKind.RETURN_TOKEN:
+	parseReturnStatement();
+	break;
+
+	case TokenKind.MUL_TOKEN:
+	parseLabelStatement();
+	break;
+
+	case TokenKind.IDENTIFIER_TOKEN:
+	parseAssignStatement(token.identifier);
+	break;
+
+	default:
+	parseError("bad statement.");
+	break;
+      }
+    }
+
+    private function parseBlock():void {
+      throw new Error("Not implemented yet!");
     }
 
     public function test():void {
+    }
+
+    public function testAdditiveExpression():void {
+      var i:int;
+      var src:String = "123 + 456";
+      var expectedBytecode:Vector.<int> = Vector.<int>([1, 123, 1, 456, OpCode.OP_ADD]);
+      lex = new LexicalAnalyzer(src);
+      parseAdditiveExpression();
       
+      if (bytecode.length != expectedBytecode.length) {
+	log("testAdditiveExpression - failed: bytecode length is wrong");
+      }
+      for (i = 0; i < bytecode.length; i++) {
+	if (bytecode[i] != expectedBytecode[i]) {
+	  log("testAdditiveExpression - failed: element is wrong");
+	}
+      }
+      log("testAdditiveExpression - successed!");
     }
   }
 }
