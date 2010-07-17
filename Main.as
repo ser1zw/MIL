@@ -10,9 +10,18 @@ package {
     }
 
     private function parserSample():void {
-      // var src:String = "if a == 0 print \"hoge\" # This is a comment";
-      var parser:Parser = new Parser("");
-      parser.test();
+      var src:String = "a = 123;\n";
+      log("--- start ---");
+      try {
+	var parser:Parser = new Parser(src);
+	for each (var c:int in parser.bytecode) {
+	  log(c);
+	}
+      }
+      catch (e:Error) {
+	log(e);
+      }
+      log("--- end ---");
     }
 
     private function lexSample():void {
@@ -33,13 +42,13 @@ package {
 	}
 	else if (token.kind >= TokenKind.EQ_TOKEN && token.kind <= TokenKind.SEMICOLON_TOKEN) {
 	  log(token.kind + " 演算子または区切り子");
-	  }
-	  else if (token.kind != TokenKind.END_OF_FILE_TOKEN && token.kind >= TokenKind.IF_TOKEN) {
+	}
+	else if (token.kind != TokenKind.END_OF_FILE_TOKEN && token.kind >= TokenKind.IF_TOKEN) {
 	  // log(keywordTable[token.kind - TokenKind.IF_TOKEN] + " 予約語");
 	  log("予約語");
-	  }
-	  } while(token.kind != TokenKind.END_OF_FILE_TOKEN);
-	  }
 	}
-      }
+      } while(token.kind != TokenKind.END_OF_FILE_TOKEN);
+    }
+  }
+}
 

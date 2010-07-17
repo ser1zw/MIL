@@ -20,6 +20,8 @@ package milParser {
       strPool = new Vector.<String>();
 
       lex = new LexicalAnalyzer(sourceCode);
+      parse();
+      fixLabels();
     }
 
     private function getToken():Token {
@@ -383,11 +385,57 @@ package milParser {
       }
     }
 
+    /** { }のブロックをパース */
     private function parseBlock():void {
-      throw new Error("Not implemented yet!");
+      var token:Token;
+      checkExpectedToken(TokenKind.LEFT_BRACE_TOKEN);
+      while (true) {
+	token = getToken();
+	if (token.kind == TokenKind.RIGHT_PAREN_TOKEN) {
+	  break;
+	}
+	ungetToken(token);
+	parseStatement();
+      }
+    }
+
+    /**
+    ジャンプ先の実アドレスを書き込む
+    (パース時にバイトコードに入れたアドレスはlabelTableのインデックス)
+    */
+    private function fixLabels():void {
+      var i:int;
+      for (i = 0; i < _bytecode.length; i++) {
+	if (_bytecode[i] == OpCode.OP_PUSH_INT
+	  || _bytecode[i] == OpCode.OP_PUSH_STRING
+	  || _bytecode[i] == OpCode.OP_PUSH_VAR
+	  || _bytecode[i] == OpCode.OP_ASSIGN_TO_VAR) {
+	  i++;
+	}
+	else if (_bytecode[i] == OpCode.OP_JUMP
+	  || _bytecode[i] == OpCode.OP_JUMP_IF_ZERO
+	  || _bytecode[i] == OpCode.OP_GOSUB) {
+	  _bytecode[i + 1] = labelTable[_bytecode[i + 1]].address;
+	}
+      }
+    }
+
+    private function parse():void {
+      var token:Token;
+      while (true) {
+	token = getToken();
+	if (token.kind == TokenKind.END_OF_FILE_TOKEN) {
+	  break;
+	}
+	else {
+	  ungetToken(token);
+	  parseStatement();
+	}
+      }
     }
 
     public function test():void {
+
     }
 
     public function testAdditiveExpression():void {
