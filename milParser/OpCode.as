@@ -1,4 +1,4 @@
-package parser {
+package milParser {
   /** オペコード */
   public class OpCode {
     public static const OP_PUSH_INT:int = 1;

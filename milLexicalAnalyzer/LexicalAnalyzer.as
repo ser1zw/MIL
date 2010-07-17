@@ -3,7 +3,7 @@ TODO
 ・OperatorInfoクラスを作ってoperatorTableを変える
 ・リファクタリング
 */
-package lexicalAnalyzer {
+package milLexicalAnalyzer {
   /** レキシカルアナライザ */
   public class LexicalAnalyzer {
     private var sourceCodeCharArray:Vector.<String>;
@@ -232,17 +232,17 @@ package lexicalAnalyzer {
       
       if (ch == null) {
 	if (state == LexerState.INITIAL_STATE || state == LexerState.COMMENT_STATE) {
-	  ret.tokenKind = TokenKind.END_OF_FILE_TOKEN;
+	  ret.kind = TokenKind.END_OF_FILE_TOKEN;
 	  return ret;
 	}
       }
       if (state == LexerState.IDENTIFIER_STATE) {
-	if (keywordTable[token] != ret.tokenKind) {
+	if (keywordTable[token] != ret.kind) {
 	  ret = Token.getIdentifierToken(TokenKind.IDENTIFIER_TOKEN, token);
 	}
       }
       else if (state == LexerState.OPERATOR_STATE) {
-	ret.tokenKind = selectOperator(token);
+	ret.kind = selectOperator(token);
       }
       
       return ret;

@@ -1,4 +1,4 @@
-package lexicalAnalyzer {
+package milLexicalAnalyzer {
   public class TokenKind {
     public static const INT_VALUE_TOKEN:int = 1; // 整数
     public static const IDENTIFIER_TOKEN:int = 2; // 識別子

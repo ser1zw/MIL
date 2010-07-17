@@ -1,4 +1,4 @@
-package lexicalAnalyzer {
+package milLexicalAnalyzer {
   public class Token {
     private var _kind:int;
     private var _intValue:int;
@@ -44,10 +44,10 @@ package lexicalAnalyzer {
       return token;
     }
 
-    public function get tokenKind():int {
+    public function get kind():int {
       return _kind;
     }
-    public function set tokenKind(kind:int):void {
+    public function set kind(kind:int):void {
       _kind = kind;
     }
 

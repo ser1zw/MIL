@@ -1,4 +1,4 @@
-package lexicalAnalyzer {
+package milLexicalAnalyzer {
   /** 読み取っているトークンの種類 */
   public class LexerState {
     public static const INITIAL_STATE:int = 1;
