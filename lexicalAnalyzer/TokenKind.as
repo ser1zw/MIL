@@ -1,5 +1,5 @@
-package {
-  class TokenKind {
+package lexicalAnalyzer {
+  public class TokenKind {
     public static const INT_VALUE_TOKEN:int = 1; // 整数
     public static const IDENTIFIER_TOKEN:int = 2; // 識別子
     public static const STRING_LITERAL_TOKEN:int = 3; // 文字列

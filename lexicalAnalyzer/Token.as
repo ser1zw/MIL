@@ -1,5 +1,5 @@
-package {
-  class Token {
+package lexicalAnalyzer {
+  public class Token {
     private var _kind:int;
     private var _intValue:int;
     private var _stringValue:String;

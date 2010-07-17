@@ -1,5 +1,7 @@
 package {
   import flash.display.Sprite;
+  import lexicalAnalyzer.*;
+  import parser.*;
   
   [SWF(width="400", height="300", backgroundColor="#eeffee")] 
   public class Main extends Sprite {
