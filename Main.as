@@ -24,7 +24,7 @@ package {
       editor.multiline = true;
       editor.border = true;
       // editor.text = "a = 1;\nb = 2;\nc = a + 1;";
-      editor.text = "a = \"miku\";";
+      editor.text = "print(\"miku\");";
 
       addChild(editor);
 
@@ -56,7 +56,7 @@ package {
 	  log(token.intValue + " 整数");
 	}
 	else if (token.kind == TokenKind.IDENTIFIER_TOKEN) {
-	  log(token.identifier + " 識別子");
+	  log(token.kind + " " + token.identifier + " 識別子");
 	}
 	else if (token.kind == TokenKind.STRING_LITERAL_TOKEN) {
 	  log(token.stringValue + " 文字列リテラル");

@@ -377,6 +377,7 @@ package milParser {
 	break;
 
 	case TokenKind.IDENTIFIER_TOKEN:
+	// たぶんprint()のときにここに来てる
 	parseAssignStatement(token.identifier);
 	break;
 

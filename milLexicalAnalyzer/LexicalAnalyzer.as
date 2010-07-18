@@ -240,9 +240,16 @@ package milLexicalAnalyzer {
 	}
       }
       if (state == LexerState.IDENTIFIER_STATE) {
-	if (keywordTable[token] != ret.kind) {
+	if (keywordTable[token] == null) {
 	  ret = Token.getIdentifierToken(TokenKind.IDENTIFIER_TOKEN, token);
 	}
+	else {
+	  ret = Token.getIdentifierToken(keywordTable[token], token);
+	}
+
+	// if (keywordTable[token] != ret.kind) {
+	//   ret = Token.getIdentifierToken(TokenKind.IDENTIFIER_TOKEN, token);
+	// }
       }
       else if (state == LexerState.OPERATOR_STATE) {
 	ret.kind = selectOperator(token);
