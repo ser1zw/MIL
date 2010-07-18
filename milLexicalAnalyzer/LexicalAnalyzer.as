@@ -131,7 +131,7 @@ package milLexicalAnalyzer {
       
       // ソースコードから1文字ずつ読み取る
       LOOP: while ((ch = sourceCodeCharArray.shift()) != null) {
-	log("Rest of src: " + sourceCodeCharArray.length);
+	// log("Rest of src: " + sourceCodeCharArray.length);
 	switch (state) {
 	  case LexerState.INITIAL_STATE:
 	  if (isDigit(ch)) {
@@ -194,9 +194,11 @@ package milLexicalAnalyzer {
 	  break;
 
 	  case LexerState.STRING_STATE:
+	  // log("STRING_STATE : " + ch);
 	  if (ch == '"') {
 	    ret = Token.getStringToken(TokenKind.STRING_LITERAL_TOKEN, token);
-	    sourceCodeCharArray.unshift(ch);
+	    // sourceCodeCharArray.unshift(ch);
+	    // state = LexerState.INITIAL_STATE;
 	    break LOOP;
 	  }
 	  else {

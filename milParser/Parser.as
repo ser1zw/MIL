@@ -287,9 +287,7 @@ package milParser {
       checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
     }
 
-    /** バグ！！ */
     private function parseAssignStatement(identifier:String):void {
-      log("parseAssignStatement()");
       var varIndex:int = searchOrNewVar(identifier);
       checkExpectedToken(TokenKind.ASSIGN_TOKEN);
       parseExpression();
