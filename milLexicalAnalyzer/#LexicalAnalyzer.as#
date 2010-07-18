@@ -194,6 +194,7 @@ package milLexicalAnalyzer {
 	  break;
 
 	  case LexerState.STRING_STATE:
+	  log("STRING_");
 	  if (ch == '"') {
 	    ret = Token.getStringToken(TokenKind.STRING_LITERAL_TOKEN, token);
 	    sourceCodeCharArray.unshift(ch);

@@ -2,16 +2,39 @@ package {
   import flash.display.Sprite;
   import milLexicalAnalyzer.*;
   import milParser.*;
+  import flash.text.TextField;
+  import com.bit101.components.*;
+  import flash.events.*;
+
 
   [SWF(width="400", height="300", backgroundColor="#eeffee")] 
   public class Main extends Sprite {
+    private var editor:TextField;
+    private var button:PushButton;
+    
     public function Main() {
-      parserSample();
+      // parserSample();
+      editor = new TextField();
+      editor.width = 300;
+      editor.height = 200;
+      editor.x = 0;
+      editor.y = 50;
+      editor.backgroundColor = 0xffffff;
+      editor.type = "input";
+      editor.multiline = true;
+      editor.border = true;
+      // editor.text = "a = 1;\nb = 2;\nc = a + 1;";
+      editor.text = "a = \"miku\";";
+
+      addChild(editor);
+
+      button = new PushButton(this, 350, 50, "run", function(e:MouseEvent):void {
+	  // lexSample(editor.text);
+	  parserSample(editor.text);
+	});
     }
 
-    private function parserSample():void {
-      var src:String = "a = 123;\n";
-      log("--- start ---");
+    private function parserSample(src:String):void {
       try {
 	var parser:Parser = new Parser(src);
 	for each (var c:int in parser.bytecode) {
@@ -21,14 +44,12 @@ package {
       catch (e:Error) {
 	log(e);
       }
-      log("--- end ---");
     }
 
-    private function lexSample():void {
+    private function lexSample(src:String):void {
       var token:Token;
-      var src:String = "if a == 0 print \"hoge\" # This is a comment";
       var lex:LexicalAnalyzer = new LexicalAnalyzer(src);
-      log(src);
+      // log(src);
       do {
 	token = lex.lexGetToken();
 	if (token.kind == TokenKind.INT_VALUE_TOKEN) {

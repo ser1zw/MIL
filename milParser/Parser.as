@@ -55,7 +55,7 @@ package milParser {
     private function checkExpectedToken(expected:int):void {
       var token:Token = getToken();
       if (token.kind != expected) {
-	parseError("parse error");
+	parseError("parse error - TokenKind " + expected + " is expected, but is " + token.kind + " (" + token.stringValue + ", " + token.identifier + ", " + token.intValue + ")");
       }
     }
 
@@ -81,6 +81,7 @@ package milParser {
 	addBytecode(OpCode.OP_PUSH_STRING);
 	strPool.push(token.stringValue);
 	addBytecode(strPool.length - 1);
+	// log(token.stringValue + " is pushed.");
 	break;
 
 	case TokenKind.LEFT_PAREN_TOKEN:
@@ -91,7 +92,7 @@ package milParser {
 	case TokenKind.IDENTIFIER_TOKEN:
 	var varIndex:int = varTable.indexOf(token.identifier);
 	if (varIndex < 0) {
-	  parseError("identifier not found.");
+	  parseError(token.identifier + " - identifier not found.");
 	}
 	addBytecode(OpCode.OP_PUSH_VAR);
 	addBytecode(varIndex);
@@ -286,8 +287,10 @@ package milParser {
       checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
     }
 
+    /** バグ！！ */
     private function parseAssignStatement(identifier:String):void {
-      var varIndex:int = searchOrNewLabel(identifier);
+      log("parseAssignStatement()");
+      var varIndex:int = searchOrNewVar(identifier);
       checkExpectedToken(TokenKind.ASSIGN_TOKEN);
       parseExpression();
       addBytecode(OpCode.OP_ASSIGN_TO_VAR);
