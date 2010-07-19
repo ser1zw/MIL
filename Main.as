@@ -7,7 +7,7 @@ package {
   import flash.events.*;
 
 
-  [SWF(width="400", height="300", backgroundColor="#eeffee")] 
+  [SWF(width="400", height="300", backgroundColor="#ccccff")] 
   public class Main extends Sprite {
     private var editor:TextField;
     private var button:PushButton;
@@ -18,11 +18,11 @@ package {
       editor.height = 200;
       editor.x = 0;
       editor.y = 50;
+      editor.background = true;
       editor.backgroundColor = 0xffffff;
       editor.type = "input";
       editor.multiline = true;
       editor.border = true;
-      // while文とif文、if-else文でbad statementが出るorz
       editor.text = "a = 1;\nif (a == 1) {\n  b = 1;\n} else {\n  c = 1;\n}\n";
 
       addChild(editor);

@@ -62,8 +62,7 @@ package milLexicalAnalyzer {
     }
 
     public function toString():String {
-      return _kind + " (" + _intValue + ", " +
-      _stringValue + ", " + _identifier + ")";
+      return _kind + " [" + [_intValue, _stringValue, _identifier].join(", ") + "]";
     }
   }
 }
