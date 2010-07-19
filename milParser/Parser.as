@@ -4,20 +4,21 @@ package milParser {
   
   public class Parser {
     private var _bytecode:Vector.<int>;
-    private var labelTable:Vector.<Label>;
-    private var varTable:Vector.<String>;
-    private var strPool:Vector.<String>;
+    private var _labelTable:Vector.<Label>;
+    private var _varTable:Vector.<String>;
+    private var _strPool:Vector.<String>;
     private var lookAheadToken:Token;
     private var lex:LexicalAnalyzer;
-    public function get bytecode():Vector.<int> {
-      return _bytecode;
-    }
+    public function get bytecode():Vector.<int> { return _bytecode; }
+    public function get labelTable():Vector.<Label> { return _labelTable; }
+    public function get varTable():Vector.<String> { return _varTable; }
+    public function get strPool():Vector.<String> { return _strPool; }
     
     public function Parser(sourceCode:String) {
       _bytecode = new Vector.<int>();
-      labelTable = new Vector.<Label>();
-      varTable = new Vector.<String>();
-      strPool = new Vector.<String>();
+      _labelTable = new Vector.<Label>();
+      _varTable = new Vector.<String>();
+      _strPool = new Vector.<String>();
 
       lex = new LexicalAnalyzer(sourceCode);
       parse();
@@ -60,10 +61,10 @@ package milParser {
     }
 
     private function searchOrNewVar(identifier:String):int {
-      var ret:int = varTable.indexOf(identifier);
+      var ret:int = _varTable.indexOf(identifier);
       if (ret < 0) {
-	varTable.push(identifier);
-	return varTable.length - 1;
+	_varTable.push(identifier);
+	return _varTable.length - 1;
       }
       return ret;
     }
@@ -79,8 +80,8 @@ package milParser {
 
 	case TokenKind.STRING_LITERAL_TOKEN:
 	addBytecode(OpCode.OP_PUSH_STRING);
-	strPool.push(token.stringValue);
-	addBytecode(strPool.length - 1);
+	_strPool.push(token.stringValue);
+	addBytecode(_strPool.length - 1);
 	// log(token.stringValue + " is pushed.");
 	break;
 
@@ -90,7 +91,7 @@ package milParser {
 	break;
 	
 	case TokenKind.IDENTIFIER_TOKEN:
-	var varIndex:int = varTable.indexOf(token.identifier);
+	var varIndex:int = _varTable.indexOf(token.identifier);
 	if (varIndex < 0) {
 	  parseError(token.identifier + " - identifier not found.");
 	}
@@ -208,8 +209,8 @@ package milParser {
     @return ラベルのインデックス
     */
     private function getLabel():int {
-      labelTable.push(new Label(null));
-      return labelTable.length - 1;
+      _labelTable.push(new Label(null));
+      return _labelTable.length - 1;
     }
 
     /**
@@ -217,19 +218,19 @@ package milParser {
     @param labelIndex アドレスをセットするラベルのインデックス
     */
     private function setLabel(labelIndex:int):void {
-      labelTable[labelIndex].address = _bytecode.length;
+      _labelTable[labelIndex].address = _bytecode.length;
     }
 
     private function searchOrNewLabel(label:String):int {
       var i:int;
-      for (i = 0; i < labelTable.length; i++) {
-	if (labelTable[i] != null && labelTable[i].identifier != null
-	  && labelTable[i].identifier == label) {
+      for (i = 0; i < _labelTable.length; i++) {
+	if (_labelTable[i] != null && _labelTable[i].identifier != null
+	  && _labelTable[i].identifier == label) {
 	  return i;
 	}
       }
-      labelTable.push(new Label(label));
-      return labelTable.length - 1;
+      _labelTable.push(new Label(label));
+      return _labelTable.length - 1;
     }
 
     private function parseIfStatement():void {
@@ -260,6 +261,10 @@ package milParser {
       }
     }
 
+    /**
+    たぶんバグあり（フィボナッチ数列のやつとかで
+    fixLabelでRangeErrorが出る。ラベルのセットがおかしい？） 
+    */
     private function parseWhileStatement():void {
       var loopLabel:int;
       var endWhileLabel:int;
@@ -402,7 +407,7 @@ package milParser {
 
     /**
     ジャンプ先の実アドレスを書き込む
-    (パース時にバイトコードに入れたアドレスはlabelTableのインデックス)
+    (パース時にバイトコードに入れたアドレスは_labelTableのインデックス)
     */
     private function fixLabels():void {
       var i:int;
@@ -416,7 +421,7 @@ package milParser {
 	else if (_bytecode[i] == OpCode.OP_JUMP
 	  || _bytecode[i] == OpCode.OP_JUMP_IF_ZERO
 	  || _bytecode[i] == OpCode.OP_GOSUB) {
-	  _bytecode[i + 1] = labelTable[_bytecode[i + 1]].address;
+	  _bytecode[i + 1] = _labelTable[_bytecode[i + 1]].address;
 	}
       }
     }
@@ -433,28 +438,6 @@ package milParser {
 	  parseStatement();
 	}
       }
-    }
-
-    public function test():void {
-
-    }
-
-    public function testAdditiveExpression():void {
-      var i:int;
-      var src:String = "123 + 456";
-      var expectedBytecode:Vector.<int> = Vector.<int>([1, 123, 1, 456, OpCode.OP_ADD]);
-      lex = new LexicalAnalyzer(src);
-      parseAdditiveExpression();
-      
-      if (bytecode.length != expectedBytecode.length) {
-	log("testAdditiveExpression - failed: bytecode length is wrong");
-      }
-      for (i = 0; i < bytecode.length; i++) {
-	if (bytecode[i] != expectedBytecode[i]) {
-	  log("testAdditiveExpression - failed: element is wrong");
-	}
-      }
-      log("testAdditiveExpression - successed!");
     }
   }
 }

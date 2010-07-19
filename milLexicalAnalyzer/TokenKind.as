@@ -27,7 +27,7 @@ package milLexicalAnalyzer {
     public static const GOSUB_TOKEN:int = 25; // gosub
     public static const RETURN_TOKEN:int = 26; // return
     public static const PRINT_TOKEN:int = 27; // print
-    public static const END_OF_FILE_TOKEN:int = 28; // EOF 
+    public static const END_OF_FILE_TOKEN:int = 28; // EOF
   }
 }
 
