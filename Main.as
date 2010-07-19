@@ -13,7 +13,6 @@ package {
     private var button:PushButton;
     
     public function Main() {
-      // parserSample();
       editor = new TextField();
       editor.width = 300;
       editor.height = 200;
@@ -23,8 +22,8 @@ package {
       editor.type = "input";
       editor.multiline = true;
       editor.border = true;
-      // editor.text = "a = 1;\nb = 2;\nc = a + 1;";
-      editor.text = "print(\"miku\");";
+      // while文とif文、if-else文でbad statementが出るorz
+      editor.text = "a = 1;\nif (a == 1) {\n  b = 1;\n} else {\n  c = 1;\n}\n";
 
       addChild(editor);
 

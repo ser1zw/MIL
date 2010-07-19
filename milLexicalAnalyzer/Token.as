@@ -60,6 +60,11 @@ package milLexicalAnalyzer {
     public function get identifier():String {
       return _identifier;
     }
+
+    public function toString():String {
+      return _kind + " (" + _intValue + ", " +
+      _stringValue + ", " + _identifier + ")";
+    }
   }
 }
 

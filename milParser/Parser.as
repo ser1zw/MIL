@@ -377,7 +377,6 @@ package milParser {
 	break;
 
 	case TokenKind.IDENTIFIER_TOKEN:
-	// たぶんprint()のときにここに来てる
 	parseAssignStatement(token.identifier);
 	break;
 
@@ -393,7 +392,7 @@ package milParser {
       checkExpectedToken(TokenKind.LEFT_BRACE_TOKEN);
       while (true) {
 	token = getToken();
-	if (token.kind == TokenKind.RIGHT_PAREN_TOKEN) {
+	if (token.kind == TokenKind.RIGHT_BRACE_TOKEN) {
 	  break;
 	}
 	ungetToken(token);
