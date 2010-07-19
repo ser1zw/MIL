@@ -11,6 +11,7 @@ package {
   [SWF(width="400", height="300", backgroundColor="#ccccff")] 
   public class Main extends Sprite {
     private var editor:TextField;
+    private var stdout:TextField;
     private var button:PushButton;
     private const FIBONACCI:String = "f0 = 0;\nf1 = 1;\nf2 = 0;\nprint(f0);\nprint(f1);\nwhile(f2 < 10) {\n    f2 = f0 + f1;\n    print(f2);\n    f0 = f1;\n    f1 = f2;\n}\n";
     
@@ -18,32 +19,42 @@ package {
       editor = new TextField();
       editor.width = 300;
       editor.height = 200;
-      editor.x = 0;
+      editor.x = -100;
       editor.y = 50;
       editor.background = true;
       editor.backgroundColor = 0xffffff;
       editor.type = "input";
       editor.multiline = true;
       editor.border = true;
+
+      stdout = new TextField();
+      stdout.width = 300;
+      stdout.height = 200;
+      stdout.x = editor.x + editor.width + 50;;
+      stdout.y = editor.y;
+      stdout.background = true;
+      stdout.backgroundColor = 0xffffff;
+      stdout.multiline = true;
+      stdout.border = true;
+
       // editor.text = "a = 1;\nif (a == 1) {\n  b = 1;\n} else {\n  c = 1;\n}\n";
       editor.text = FIBONACCI;
       // editor.text = "print(\"miku\");";
       // editor.text = "gosub *sub;\ngoto *end;\n\n*sub\n  print(\"Miku\");\n  return;\n*end\n";
 
       addChild(editor);
+      addChild(stdout);
 
-      button = new PushButton(this, 350, 50, "run", function(e:MouseEvent):void {
-	  // lexSample2(editor.text);
-	  // parserSample(editor.text);
+      button = new PushButton(this, editor.x, editor.y + editor.height + 20, "run", function(e:MouseEvent):void {
+	  stdout.text = "";
 	  mvmSample(editor.text);
 	});
-      // log(ParserTest.whileTest());
     }
 
     private function mvmSample(src:String):void {
       try {
 	var parser:Parser = new Parser(src);
-	var mvm:Mvm = new Mvm(parser.bytecode, parser.strPool);
+	var mvm:Mvm = new Mvm(parser.bytecode, parser.strPool, function(msg:String):void { stdout.appendText(msg + "\r\n"); });
 	mvm.execute();
       }
       catch (e:Error) {

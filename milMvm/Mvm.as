@@ -6,13 +6,16 @@ package milMvm {
     private var _variable:Vector.<Value>;
     private var _bytecode:Vector.<int>;
     private var _strPool:Vector.<String>;
+    private var stdout:Function;
     public function get stack():Vector.<Value> { return _stack; }
     
-    public function Mvm(bytecode:Vector.<int>, strPool:Vector.<String>) {
+    public function Mvm(bytecode:Vector.<int>, strPool:Vector.<String>,
+      stdout:Function = null) {
       _stack = new Vector.<Value>();
       _variable = new Vector.<Value>();
       this._bytecode = bytecode;
       this._strPool = strPool;
+      this.stdout = stdout;
     }
 
     public function execute():void {
@@ -21,8 +24,8 @@ package milMvm {
       var str:String;
       var bool:Boolean;
       var pc:int = 0;
-      log("bytecode: " + _bytecode.join(" "));
-      log("strPool: " + _strPool.join(" "));
+      // log("bytecode: " + _bytecode.join(" "));
+      // log("strPool: " + _strPool.join(" "));
       
       while (pc < _bytecode.length) {
 	switch (_bytecode[pc]) {
@@ -157,11 +160,13 @@ package milMvm {
 	  case OpCode.OP_PRINT:
 	  // log("in OP_PRINT:");
 	  value = _stack.pop();
-	  if (value.type == ValueType.INT_VALUE_TYPE) {
-	    log(value.intValue);
-	  }
-	  else {
-	    log(value.stringValue);
+	  if (stdout != null) {
+	    if (value.type == ValueType.INT_VALUE_TYPE) {
+	      stdout(value.intValue);
+	    }
+	    else {
+	      stdout(value.stringValue);
+	    }
 	  }
 	  pc++;
 	  // log("exit OP_PRINT:");
@@ -175,5 +180,4 @@ package milMvm {
     }
   }
 }
-
 
