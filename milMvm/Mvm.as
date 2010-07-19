@@ -146,8 +146,7 @@ package milMvm {
 	  break;
 
 	  case OpCode.OP_GOSUB:
-	  // _stack[_stack.length - 1].intValue = pc + 2;
-	  _stack[_stack.length - 1] = Value.createIntValue(pc + 2);
+	  _stack.push(Value.createIntValue(pc + 2));
 	  pc = _bytecode[pc + 1];
 	  break;
 

@@ -26,8 +26,10 @@ package {
       editor.multiline = true;
       editor.border = true;
       // editor.text = "a = 1;\nif (a == 1) {\n  b = 1;\n} else {\n  c = 1;\n}\n";
-      // editor.text = FIBONACCI;
-      editor.text = "print(\"miku\");";
+      editor.text = FIBONACCI;
+      // editor.text = "print(\"miku\");";
+      // editor.text = "gosub *sub;\ngoto *end;\n\n*sub\n  print(\"Miku\");\n  return;\n*end\n";
+
       addChild(editor);
 
       button = new PushButton(this, 350, 50, "run", function(e:MouseEvent):void {
