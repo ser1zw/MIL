@@ -42,6 +42,11 @@ package milParser {
     }
 
     private function addBytecode(bytecode:int):void {
+      // if (bytecode == 23) {
+      // 	log("***" + _bytecode.length);
+      // 	throw new Error("mikumiku");
+      // }
+
       _bytecode.push(bytecode);
     }
     
@@ -261,10 +266,6 @@ package milParser {
       }
     }
 
-    /**
-    たぶんバグあり（フィボナッチ数列のやつとかで
-    fixLabelでRangeErrorが出る。ラベルのセットがおかしい？） 
-    */
     private function parseWhileStatement():void {
       var loopLabel:int;
       var endWhileLabel:int;
@@ -422,6 +423,7 @@ package milParser {
 	  || _bytecode[i] == OpCode.OP_JUMP_IF_ZERO
 	  || _bytecode[i] == OpCode.OP_GOSUB) {
 	  _bytecode[i + 1] = _labelTable[_bytecode[i + 1]].address;
+	  i++;
 	}
       }
     }

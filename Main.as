@@ -14,13 +14,14 @@ package {
     private var stdout:TextField;
     private var button:PushButton;
     private const FIBONACCI:String = "f0 = 0;\nf1 = 1;\nf2 = 0;\nprint(f0);\nprint(f1);\nwhile(f2 < 10) {\n    f2 = f0 + f1;\n    print(f2);\n    f0 = f1;\n    f1 = f2;\n}\n";
+    private const ERROR_1:String = "a = 1;\nif (a > 5) {\n    goto *miku;\n}\nprint(\"Luka\");\ngoto *end;\n\n*miku\n    print(\"Miku\");\n    goto *end;\n*end\n";
     
     public function Main() {
       editor = new TextField();
-      editor.width = 300;
+      editor.width = 200;
       editor.height = 200;
-      editor.x = -100;
-      editor.y = 50;
+      editor.x = 0;
+      editor.y = 20;
       editor.background = true;
       editor.backgroundColor = 0xffffff;
       editor.type = "input";
@@ -28,9 +29,9 @@ package {
       editor.border = true;
 
       stdout = new TextField();
-      stdout.width = 300;
+      stdout.width = 200;
       stdout.height = 200;
-      stdout.x = editor.x + editor.width + 50;;
+      stdout.x = editor.x + editor.width + 20;
       stdout.y = editor.y;
       stdout.background = true;
       stdout.backgroundColor = 0xffffff;
@@ -38,6 +39,7 @@ package {
       stdout.border = true;
 
       // editor.text = "a = 1;\nif (a == 1) {\n  b = 1;\n} else {\n  c = 1;\n}\n";
+      // editor.text = ERROR_1;
       editor.text = FIBONACCI;
       // editor.text = "print(\"miku\");";
       // editor.text = "gosub *sub;\ngoto *end;\n\n*sub\n  print(\"Miku\");\n  return;\n*end\n";
@@ -47,6 +49,7 @@ package {
 
       button = new PushButton(this, editor.x, editor.y + editor.height + 20, "run", function(e:MouseEvent):void {
 	  stdout.text = "";
+	  // lexSample2(editor.text);
 	  mvmSample(editor.text);
 	});
     }
@@ -76,7 +79,7 @@ package {
     private function lexSample2(src:String):void {
       var token:Token;
       var lex:LexicalAnalyzer = new LexicalAnalyzer(src);
-      var table:Array = ["dummy", "整数", "識別子", "文字列", "==", "!=", ">=", "<=", "+", "-", "*", "/", "=", ">", "<", "(", ")", "{", " }", ",", ";", "if", "else", "while", "goto", "gosub", "return", "print", "EOF"];
+      var table:Array = ["dummy", "整数", "識別子", "文字列", "==", "!=", ">=", "<=", "+", "-", "*", "/", "=", ">", "<", "(", ")", "{", "}", ",", ";", "if", "else", "while", "goto", "gosub", "return", "print", "EOF"];
       do {
 	token = lex.lexGetToken();
 	if (token.kind == TokenKind.INT_VALUE_TOKEN) {
