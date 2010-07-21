@@ -1,4 +1,6 @@
+// -*- mode: actionscript; coding: utf-8-unix -*- 
 package milLexicalAnalyzer {
+  /** トークンの種類 */
   public class TokenKind {
     public static const INT_VALUE_TOKEN:int = 1; // 整数
     public static const IDENTIFIER_TOKEN:int = 2; // 識別子

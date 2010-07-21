@@ -1,4 +1,6 @@
+// -*- mode: actionscript; coding: utf-8-unix -*- 
 package milLexicalAnalyzer {
+  /** トークン */
   public class Token {
     private var _kind:int;
     private var _intValue:int;

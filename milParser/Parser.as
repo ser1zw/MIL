@@ -42,11 +42,6 @@ package milParser {
     }
 
     private function addBytecode(bytecode:int):void {
-      // if (bytecode == 23) {
-      // 	log("***" + _bytecode.length);
-      // 	throw new Error("mikumiku");
-      // }
-
       _bytecode.push(bytecode);
     }
     
@@ -423,7 +418,7 @@ package milParser {
 	  || _bytecode[i] == OpCode.OP_JUMP_IF_ZERO
 	  || _bytecode[i] == OpCode.OP_GOSUB) {
 	  _bytecode[i + 1] = _labelTable[_bytecode[i + 1]].address;
-	  i++;
+	  i++; // オリジナルにはないが、たぶん必要
 	}
       }
     }

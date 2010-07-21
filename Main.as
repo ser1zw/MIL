@@ -1,3 +1,4 @@
+// -*- mode: actionscript; coding: utf-8-unix -*- 
 package {
   import flash.display.Sprite;
   import milLexicalAnalyzer.*;
@@ -57,8 +58,10 @@ package {
     private function mvmSample(src:String):void {
       try {
 	var parser:Parser = new Parser(src);
-	var mvm:Mvm = new Mvm(parser.bytecode, parser.strPool, function(msg:String):void { stdout.appendText(msg + "\r\n"); });
+	var mvm:Mvm = new Mvm(parser.bytecode, parser.strPool, 
+	  function(msg:String):void { stdout.appendText(msg + "\r\n"); });
 	mvm.execute();
+	log(mvm.dumpAsmCode().join("\r\n"));
       }
       catch (e:Error) {
 	log(e);
