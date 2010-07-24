@@ -6,6 +6,7 @@ package {
   import test.*;
   import milMvm.*;
   import flash.text.TextField;
+  import flash.text.TextFormat;
   import com.bit101.components.*;
   import flash.events.*;
 
@@ -13,11 +14,16 @@ package {
   public class Main extends Sprite {
     private var editor:TextField;
     private var stdout:TextField;
+    private var format:TextFormat;
     private var button:PushButton;
     private const FIBONACCI:String = "f0 = 0;\nf1 = 1;\nf2 = 0;\nprint(f0);\nprint(f1);\nwhile(f2 < 10) {\n    f2 = f0 + f1;\n    print(f2);\n    f0 = f1;\n    f1 = f2;\n}\n";
     private const ERROR_1:String = "a = 1;\nif (a > 5) {\n    goto *miku;\n}\nprint(\"Luka\");\ngoto *end;\n\n*miku\n    print(\"Miku\");\n    goto *end;\n*end\n";
+
     
     public function Main() {
+      format = new TextFormat();
+      format.font ="_等幅";
+
       editor = new TextField();
       editor.width = 200;
       editor.height = 200;
@@ -28,6 +34,7 @@ package {
       editor.type = "input";
       editor.multiline = true;
       editor.border = true;
+      editor.defaultTextFormat = format;
 
       stdout = new TextField();
       stdout.width = 200;
@@ -38,6 +45,7 @@ package {
       stdout.backgroundColor = 0xffffff;
       stdout.multiline = true;
       stdout.border = true;
+      stdout.defaultTextFormat = format;
 
       // editor.text = "a = 1;\nif (a == 1) {\n  b = 1;\n} else {\n  c = 1;\n}\n";
       // editor.text = ERROR_1;
@@ -47,7 +55,7 @@ package {
 
       addChild(editor);
       addChild(stdout);
-
+      
       button = new PushButton(this, editor.x, editor.y + editor.height + 20, "run", function(e:MouseEvent):void {
 	  stdout.text = "";
 	  // lexSample2(editor.text);
