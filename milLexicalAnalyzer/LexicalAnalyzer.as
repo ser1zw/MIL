@@ -112,6 +112,11 @@ package milLexicalAnalyzer {
       return (charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122);
     }
 
+    /**
+    与えられた文字が空白文字であるかを判定
+    @param ch 判定対象の文字
+    @return chが空白文字であればtrue, 英字でなければfalse
+    */
     private function isSpace(ch:String):Boolean {
       var charCode:Number = ch.charCodeAt(0);
       // " " = 32, "\f" = 12, "\n" = 10, "\r" = 13, "\t" = 9, "\v" = 11

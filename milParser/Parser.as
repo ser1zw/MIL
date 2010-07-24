@@ -1,6 +1,9 @@
 // -*- mode: actionscript; coding: utf-8-unix -*- 
 package milParser {
-  import milLexicalAnalyzer.*;
+  import milLexicalAnalyzer.LexicalAnalyzer;
+  import milLexicalAnalyzer.Token;
+  import milLexicalAnalyzer.TokenKind;
+
   /** パーサ */
   public class Parser {
     private var _bytecode:Vector.<int>;
