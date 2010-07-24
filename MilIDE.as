@@ -9,6 +9,7 @@ package {
   import flash.events.MouseEvent;
   
   [SWF(width="400", height="300", backgroundColor="#ccccff")] 
+  /** MILのIDE */
   public class MilIDE extends Sprite {
     private var editor:TextField;
     private var stdout:TextField;
@@ -19,6 +20,7 @@ package {
     public function MilIDE() {
       format = new TextFormat();
       format.font ="_等幅";
+      format.size = 10;
 
       editor = new TextField();
       editor.width = 200;
@@ -61,9 +63,10 @@ package {
       try {
 	var parser:Parser = new Parser(sourceCode);
 	var mvm:Mvm = new Mvm(parser.bytecode, parser.strPool, function(msg:String):void {
-	    stdout.appendText(msg + "\r\n");
+	    stdout.appendText(msg + "\n");
 	  });
-	mvm.execute();
+	// mvm.execute();
+	stdout.appendText(mvm.dumpAsmCode().join("\n"));
       }
       catch (e:Error) {
 	stdout.appendText(e.toString());

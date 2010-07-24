@@ -9,7 +9,6 @@ package milLexicalAnalyzer {
 
     /**
     int型の値を表すトークンオブジェクトを作成
-    @param tokenKind トークンの種類(TokenKind)
     @param intValue 値
     @return tokenKindとintValueがセットされたトークンオブジェクト
     */
@@ -22,7 +21,6 @@ package milLexicalAnalyzer {
 
     /**
     String型の値を表すトークンオブジェクトを作成
-    @param tokenKind トークンの種類(TokenKind)
     @param stringValue 値
     @return tokenKindとstringValueがセットされたトークンオブジェクト
     */

@@ -315,34 +315,28 @@ package milMvm {
 	  case OpCode.OP_JUMP:
 	  asm.push("OP_JUMP");
 	  asm.push(_bytecode[pc + 1]);
-	  pc = _bytecode[pc + 1];
+	  pc += 2;
 	  break;
-
+	  
 	  case OpCode.OP_JUMP_IF_ZERO:
 	  asm.push("OP_JUMP_IF_ZERO " + _stack[_stack.length - 1].intValue);
 	  asm.push(_bytecode[pc + 1]);
-	  if (_stack.pop().intValue == 0) {
-	    pc = _bytecode[pc + 1];
-	  }
-	  else {
-	    pc += 2;
-	  }
+	  pc += 2;
 	  break;
 
 	  case OpCode.OP_GOSUB:
 	  asm.push("OP_GOSUB");
 	  asm.push(_bytecode[pc + 1]);
 	  _stack.push(Value.createIntValue(pc + 2));
-	  pc = _bytecode[pc + 1];
+	  pc += 2;
 	  break;
 
 	  case OpCode.OP_RETURN:
-	  asm.push("OP_RETURN " + _stack[_stack.length - 1].intValue);
-	  pc = _stack.pop().intValue;
+	  asm.push("OP_RETURN " + _stack.pop().intValue);
+	  pc++;
 	  break;
 
 	  case OpCode.OP_PRINT:
-	  
 	  value = _stack.pop();
 	  if (stdout != null) {
 	    if (value.type == ValueType.INT_VALUE_TYPE) {
