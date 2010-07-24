@@ -1,7 +1,7 @@
 // -*- mode: actionscript; coding: utf-8-unix -*- 
 package milParser {
   import milLexicalAnalyzer.*;
-  
+  /** パーサ */
   public class Parser {
     private var _bytecode:Vector.<int>;
     private var _labelTable:Vector.<Label>;
@@ -13,7 +13,11 @@ package milParser {
     public function get labelTable():Vector.<Label> { return _labelTable; }
     public function get varTable():Vector.<String> { return _varTable; }
     public function get strPool():Vector.<String> { return _strPool; }
-    
+
+    /**
+    コンストラクタ
+    @param sourceCode ソースコード
+    */
     public function Parser(sourceCode:String) {
       _bytecode = new Vector.<int>();
       _labelTable = new Vector.<Label>();
@@ -25,6 +29,10 @@ package milParser {
       fixLabels();
     }
 
+    /**
+    次のトークンを取得
+    @return トークン
+    */
     private function getToken():Token {
       var ret:Token;
       if (lookAheadToken != null) {
@@ -37,14 +45,26 @@ package milParser {
       return ret;
     }
 
+    /**
+    トークンを押し戻す
+    @param token トークン
+    */
     private function ungetToken(token:Token):void {
       lookAheadToken = token;
     }
 
+    /**
+    バイトコードに追加
+    @param bytecode 追加するバイトコード
+    */
     private function addBytecode(bytecode:int):void {
       _bytecode.push(bytecode);
     }
     
+    /**
+    エラーを発生
+    @param message エラーメッセージ
+    */
     private function parseError(message:String):void {
       throw new Error("Parse error: " + message + " at " + lex.lineNumber);
     }
@@ -56,10 +76,15 @@ package milParser {
     private function checkExpectedToken(expected:int):void {
       var token:Token = getToken();
       if (token.kind != expected) {
-	parseError("parse error - TokenKind " + expected + " is expected, but is " + token.kind + " (" + token.stringValue + ", " + token.identifier + ", " + token.intValue + ")");
+	parseError("parse error - TokenKind " + expected + " is expected, but is " + token.toString());
       }
     }
-
+    
+    /**
+    変数を検索し、ない場合は新たに登録
+    @param identifier 識別子
+    @return 変数のインデックス
+    */
     private function searchOrNewVar(identifier:String):int {
       var ret:int = _varTable.indexOf(identifier);
       if (ret < 0) {
@@ -82,7 +107,6 @@ package milParser {
 	addBytecode(OpCode.OP_PUSH_STRING);
 	_strPool.push(token.stringValue);
 	addBytecode(_strPool.length - 1);
-	// log(token.stringValue + " is pushed.");
 	break;
 
 	case TokenKind.LEFT_PAREN_TOKEN:
@@ -156,6 +180,7 @@ package milParser {
       }
     }
 
+    /** 比較演算子からなる式をパース */
     private function parseCompareExpression():void {
       var token:Token;
       parseAdditiveExpression();
@@ -200,6 +225,7 @@ package milParser {
       }
     }
 
+    /** 式をパース */
     private function parseExpression():void {
       parseCompareExpression();
     }
@@ -221,6 +247,11 @@ package milParser {
       _labelTable[labelIndex].address = _bytecode.length;
     }
 
+    /**
+    ラベルを検索し、ない場合は新たに登録
+    @param label ラベル
+    @return ラベルのインデックス
+    */
     private function searchOrNewLabel(label:String):int {
       var i:int;
       for (i = 0; i < _labelTable.length; i++) {
@@ -233,6 +264,7 @@ package milParser {
       return _labelTable.length - 1;
     }
 
+    /** if文をパース */
     private function parseIfStatement():void {
       var token:Token;
       var elseLabel:int;
@@ -261,6 +293,7 @@ package milParser {
       }
     }
 
+    /** while文をパース */
     private function parseWhileStatement():void {
       var loopLabel:int;
       var endWhileLabel:int;
@@ -280,6 +313,7 @@ package milParser {
       setLabel(endWhileLabel);
     }
 
+    /** print文をパース */
     private function parsePrintStatement():void {
       checkExpectedToken(TokenKind.LEFT_PAREN_TOKEN);
       parseExpression();
@@ -288,6 +322,10 @@ package milParser {
       checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
     }
 
+    /**
+    代入文をパース
+    @param identifier 識別子
+    */
     private function parseAssignStatement(identifier:String):void {
       var varIndex:int = searchOrNewVar(identifier);
       checkExpectedToken(TokenKind.ASSIGN_TOKEN);
@@ -297,6 +335,7 @@ package milParser {
       checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
     }
 
+    /** goto文をパース */
     private function parseGotoStatement():void {
       var token:Token;
       var label:int;
@@ -312,6 +351,7 @@ package milParser {
       checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
     }
 
+    /** gosub文をパース */
     private function parseGosubStatement():void {
       var token:Token;
       var label:int;
@@ -327,6 +367,7 @@ package milParser {
       checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
     }
 
+    /** ラベル文をパース */
     private function parseLabelStatement():void {
       var token:Token;
       var label:int;
@@ -339,6 +380,7 @@ package milParser {
       setLabel(label);
     }
 
+    /** return文をパース */
     private function parseReturnStatement():void {
       addBytecode(OpCode.OP_RETURN);
       checkExpectedToken(TokenKind.SEMICOLON_TOKEN);
@@ -386,7 +428,7 @@ package milParser {
 	break;
       }
     }
-
+    
     /** { }のブロックをパース */
     private function parseBlock():void {
       var token:Token;
@@ -423,6 +465,7 @@ package milParser {
       }
     }
 
+    /** パース */
     private function parse():void {
       var token:Token;
       while (true) {

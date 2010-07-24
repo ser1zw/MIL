@@ -52,7 +52,6 @@ package milLexicalAnalyzer {
     public function set kind(kind:int):void {
       _kind = kind;
     }
-
     public function get intValue():int {
       return _intValue;
     }

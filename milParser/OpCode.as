@@ -1,3 +1,4 @@
+// -*- mode: actionscript; coding: utf-8-unix -*- 
 package milParser {
   /** オペコード */
   public class OpCode {

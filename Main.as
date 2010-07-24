@@ -61,7 +61,7 @@ package {
 	var mvm:Mvm = new Mvm(parser.bytecode, parser.strPool, 
 	  function(msg:String):void { stdout.appendText(msg + "\r\n"); });
 	mvm.execute();
-	log(mvm.dumpAsmCode().join("\r\n"));
+	// log(mvm.dumpAsmCode().join("\r\n"));
       }
       catch (e:Error) {
 	log(e);

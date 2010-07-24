@@ -1,8 +1,4 @@
-/*
-TODO
-・OperatorInfoクラスを作ってoperatorTableを変える
-・リファクタリング
-*/
+// -*- mode: actionscript; coding: utf-8-unix -*- 
 package milLexicalAnalyzer {
   /** レキシカルアナライザ */
   public class LexicalAnalyzer {
@@ -13,7 +9,7 @@ package milLexicalAnalyzer {
     public function get lineNumber():int { return currentLineNumber; }
 
     /**
-    コストラクタ
+    コンストラクタ
     @param sourceCode ソースコード
     */
     public function LexicalAnalyzer(sourceCode:String) {
@@ -53,9 +49,12 @@ package milLexicalAnalyzer {
       for (var i:int = 0; i < sourceCode.length; i++) {
 	sourceCodeCharArray.push(sourceCode.charAt(i));
       }
-      // sourceCodeCharArray.push(" ");
     }
-
+    
+    /**
+    エラーを発生
+    @param エラーメッセージ
+    */
     private function lexError(message:String):void {
       throw new Error("lex error: " + message);
     }
@@ -98,7 +97,7 @@ package milLexicalAnalyzer {
     */
     private function isDigit(ch:String):Boolean {
       var charCode:Number = ch.charCodeAt(0);
-      // "0".charCodeAt(0) == 48, "9".charCodeAt(0) == 57
+      // "0" = 48, "9" = 57
       return charCode >= 48 && charCode <= 57;
     }
 
@@ -131,19 +130,14 @@ package milLexicalAnalyzer {
       
       // ソースコードから1文字ずつ読み取る
       LOOP: while ((ch = sourceCodeCharArray.shift()) != null) {
-	// log("Rest of src: " + sourceCodeCharArray.length);
 	switch (state) {
 	  case LexerState.INITIAL_STATE:
 	  if (isDigit(ch)) {
-	    // log("INITIAL_STATE: Digit " + ch)
 	    token = token.concat(ch);
-	    // log("token = " + token);
 	    state = LexerState.INT_VALUE_STATE;
 	  }
 	  else if (isAlpha(ch) || ch == "_") {
-	    // log("INITIAL_STATE: Alphabet " + ch)
 	    token = token.concat(ch);
-	    // log("token = " + token);
 	    state = LexerState.IDENTIFIER_STATE;
 	  }
 	  else if (ch == '"') {
@@ -151,7 +145,6 @@ package milLexicalAnalyzer {
 	  }
 	  else if (inOperator(token, ch)) {
 	    token = token.concat(ch);
-	    // log("OPERATOR: " + token);
 	    state = LexerState.OPERATOR_STATE;
 	  }
 	  else if (isSpace(ch)) {
@@ -169,13 +162,9 @@ package milLexicalAnalyzer {
 
 	  case LexerState.INT_VALUE_STATE:
 	  if (isDigit(ch)) {
-	    // log("INT_VALUE_STATE: Digit " + ch)
 	    token = token.concat(ch);
-	    // log("token = " + token);
 	  }
 	  else {
-	    // log("INT_VALUE_STATE: not Digit " + ch)
-	    // log("token = " + token);
 	    ret = Token.getIntToken(TokenKind.INT_VALUE_TOKEN, parseInt(token));
 	    sourceCodeCharArray.unshift(ch);
 	    break LOOP;
@@ -194,11 +183,8 @@ package milLexicalAnalyzer {
 	  break;
 
 	  case LexerState.STRING_STATE:
-	  // log("STRING_STATE : " + ch);
 	  if (ch == '"') {
 	    ret = Token.getStringToken(TokenKind.STRING_LITERAL_TOKEN, token);
-	    // sourceCodeCharArray.unshift(ch);
-	    // state = LexerState.INITIAL_STATE;
 	    break LOOP;
 	  }
 	  else {
@@ -208,12 +194,9 @@ package milLexicalAnalyzer {
 
 	  case LexerState.OPERATOR_STATE:
 	  if (inOperator(token, ch)) {
-	    // log("OPERATOR_STATE: is operator " + ch);
 	    token = token.concat(ch);
 	  }
 	  else {
-	    // log("OPERATOR_STATE: is not operator " + ch);
-	    // log("IS OPERATOR_STATE?: " + (state == LexerState.OPERATOR_STATE));
 	    sourceCodeCharArray.unshift(ch);
 	    break LOOP;
 	  }
@@ -230,8 +213,6 @@ package milLexicalAnalyzer {
 	  break;
 	}
       }
-      // log("AFTER LOOP:");
-      // log("ch = " + ch + " state = " + state);
       
       if (ch == null) {
 	if (state == LexerState.INITIAL_STATE || state == LexerState.COMMENT_STATE) {
@@ -246,17 +227,9 @@ package milLexicalAnalyzer {
 	else {
 	  ret = Token.getIdentifierToken(keywordTable[token], token);
 	}
-
-	// if (keywordTable[token] != ret.kind) {
-	//   ret = Token.getIdentifierToken(TokenKind.IDENTIFIER_TOKEN, token);
-	// }
       }
       else if (state == LexerState.OPERATOR_STATE) {
 	ret.kind = selectOperator(token);
-      }
-
-      if (ret.kind == 0) {
-	throw new Error("Tokanize failed");
       }
       
       return ret;

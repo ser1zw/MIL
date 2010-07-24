@@ -1,3 +1,4 @@
+// -*- mode: actionscript; coding: utf-8-unix -*- 
 package milLexicalAnalyzer {
   /** 読み取っているトークンの種類 */
   public class LexerState {
