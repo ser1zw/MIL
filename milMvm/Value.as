@@ -1,4 +1,6 @@
+// -*- mode: actionscript; coding: undecided-unix -*- 
 package milMvm {
+  /** MVMで扱うデータ */
   public class Value {
     private var _type:int;
     private var _intValue:int;
@@ -24,6 +26,11 @@ package milMvm {
       }
     };
 
+    /**
+    int型の値を表す値を作成
+    @param intValue 値
+    @return Valueオブジェクト
+    */
     public static function createIntValue(intValue:int):Value {
       var value:Value = new Value();
       value._type = ValueType.INT_VALUE_TYPE;
@@ -32,6 +39,11 @@ package milMvm {
       return value;
     }
 
+    /**
+    String型の値を表す値を作成
+    @param stringValue 値
+    @return Valueオブジェクト
+    */
     public static function createStringValue(stringValue:String):Value {
       var value:Value = new Value();
       value._type = ValueType.STRING_VALUE_TYPE;
@@ -41,4 +53,5 @@ package milMvm {
     }
   }
 }
+
 

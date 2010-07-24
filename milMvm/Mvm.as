@@ -189,6 +189,13 @@ package milMvm {
       var bool:Boolean;
       var pc:int = 0;
       var asm:Array = [];
+      if (_strPool.length > 0) {
+	asm.push(".STRING_POOL");
+	for each (str in _strPool) {
+	  asm.push(str);
+	}
+      }
+      asm.push(".BYTECODE");
       
       while (pc < _bytecode.length) {
 	switch (_bytecode[pc]) {
@@ -203,7 +210,6 @@ package milMvm {
 	  case OpCode.OP_PUSH_STRING:
 	  asm.push("OP_PUSH_STRING");
 	  asm.push(_bytecode[pc + 1]);
-
 	  str = _strPool[_bytecode[pc + 1]];
 	  value = Value.createStringValue(str);
 	  _stack.push(value);
@@ -306,7 +312,13 @@ package milMvm {
 	  break;
 
 	  case OpCode.OP_ASSIGN_TO_VAR:
-	  asm.push("OP_ASSIGN_TO_VAR");
+	  if (_stack[_stack.length - 1].type == ValueType.INT_VALUE_TYPE) {
+	    str = _stack[_stack.length - 1].intValue.toString();
+	  }
+	  else {
+	    str = _stack[_stack.length - 1].stringValue;
+	  }
+	  asm.push("OP_ASSIGN_TO_VAR " + str);
 	  asm.push(_bytecode[pc + 1]);
 	  _variable[_bytecode[pc + 1]] = _stack.pop();
 	  pc += 2;
