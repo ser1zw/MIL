@@ -58,7 +58,6 @@ package {
       
       button = new PushButton(this, editor.x, editor.y + editor.height + 20, "run", function(e:MouseEvent):void {
 	  stdout.text = "";
-	  // lexSample2(editor.text);
 	  mvmSample(editor.text);
 	});
     }
@@ -131,7 +130,6 @@ package {
 	  log(token + " 演算子または区切り子");
 	}
 	else if (token.kind != TokenKind.END_OF_FILE_TOKEN && token.kind >= TokenKind.IF_TOKEN) {
-	  // log(keywordTable[token.kind - TokenKind.IF_TOKEN] + " 予約語");
 	  log(token + "予約語");
 	}
       } while(token.kind != TokenKind.END_OF_FILE_TOKEN);
