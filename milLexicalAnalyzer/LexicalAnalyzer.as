@@ -165,7 +165,7 @@ package milLexicalAnalyzer {
 	    token = token.concat(ch);
 	  }
 	  else {
-	    ret = Token.getIntToken(TokenKind.INT_VALUE_TOKEN, parseInt(token));
+	    ret = Token.getIntToken(parseInt(token));
 	    sourceCodeCharArray.unshift(ch);
 	    break LOOP;
 	  }
@@ -184,7 +184,7 @@ package milLexicalAnalyzer {
 
 	  case LexerState.STRING_STATE:
 	  if (ch == '"') {
-	    ret = Token.getStringToken(TokenKind.STRING_LITERAL_TOKEN, token);
+	    ret = Token.getStringToken(token);
 	    break LOOP;
 	  }
 	  else {

@@ -13,9 +13,9 @@ package milLexicalAnalyzer {
     @param intValue 値
     @return tokenKindとintValueがセットされたトークンオブジェクト
     */
-    public static function getIntToken(tokenKind:int, intValue:int):Token {
+    public static function getIntToken(intValue:int):Token {
       var token:Token = new Token();
-      token._kind = tokenKind;
+      token._kind = TokenKind.INT_VALUE_TOKEN;
       token._intValue = intValue;
       return token;
     }
@@ -26,9 +26,9 @@ package milLexicalAnalyzer {
     @param stringValue 値
     @return tokenKindとstringValueがセットされたトークンオブジェクト
     */
-    public static function getStringToken(tokenKind:int, stringValue:String):Token {
+    public static function getStringToken(stringValue:String):Token {
       var token:Token = new Token();
-      token._kind = tokenKind;
+      token._kind = TokenKind.STRING_LITERAL_TOKEN;
       token._stringValue = stringValue;
       return token;
     }
