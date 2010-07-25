@@ -3,6 +3,7 @@ package milIde {
   import flash.display.Sprite;
   import milParser.Parser;
   import milMvm.Mvm;
+  import com.bit101.components.Style;
   import com.bit101.components.Label;
   import com.bit101.components.PushButton;
   import com.bit101.components.RadioButton;
@@ -22,6 +23,8 @@ package milIde {
     
     /** コンストラクタ */
     public function MilIDE() {
+      Style.embedFonts = false;
+      Style.fontName = "_等幅";
       editorLabel = new Label(this, 0, 5, "Editor");
       editor = new TextArea(this, 0, editorLabel.y + editorLabel.height);
       editor.width = 250;
