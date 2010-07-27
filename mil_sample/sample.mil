@@ -1,0 +1,47 @@
+# MILのサンプル
+# 使用できるデータ型: 整数型と文字列型のみ
+# 変数: 最初の代入が宣言を兼ねる (例: a = 100;)
+# 制御構造: if文, if~else文, while文, goto文, gosub~return文
+#           goto, gosubのラベルには「*」をつける
+#           if文, if~else文, while文は{ }を省略できない
+# 出力: print文
+# 1行コメント: #から行末までコメント
+
+print("hello, world."); # print文で文字列を出力
+a = 10;
+b = 200;
+print(a + b * 10); # 多項式の計算に対応
+
+i = 0;
+while (i < 5) { # while文やif~else文による制御構造をもつ
+  print(i);
+  if (i <= 2) {
+    print("i <= 2");
+  }
+  else {
+    print("i > 2");
+  }
+  i = i + 1;
+}
+
+goto *c; # goto文でラベルへジャンプする
+*b
+  print("b");
+  goto *d;
+*c
+  print("c");
+  goto *b;
+*d
+  print("d");
+
+  gosub *sub; # gosub文でサブルーチンのラベルへジャンプする
+  print("returned");
+  goto *end;
+
+*sub
+  print("hello,");
+  print("subroutine");
+  print(10 + a * b);
+  return; # return文でサブルーチンから戻る
+*end
+

@@ -24,7 +24,7 @@ package milIde {
     /** コンストラクタ */
     public function MilIDE() {
       Style.embedFonts = false;
-      Style.fontName = "_等幅";
+      Style.fontName = "_typewriter";
       editorLabel = new Label(this, 0, 5, "Editor");
       editor = new TextArea(this, 0, editorLabel.y + editorLabel.height);
       editor.width = 250;

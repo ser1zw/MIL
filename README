@@ -1,4 +1,20 @@
-MIL Language VM and interpreter written in ActionScript
-(MIL Language is a toy language appeared in the Nikkei Software on Aug 2010.)
+Mil.as - ActionScriptで作ったMILの処理系
 
- 
+日経ソフトウエア2010年8月号の記事「スクリプト言語をゼロから作ろう」で解説されていた
+「MIL」という言語の処理系をつくってみました。
+オリジナルの処理系(C言語)は、記事のサポートページ(http://itpro.nikkeibp.co.jp/article/MAG/20091120/340842/?ST=nsw#201008)からダウンロード可能です。
+
+■MILの仕様
+・使用できるデータ型: 整数型と文字列型のみ
+・変数: 最初の代入が宣言を兼ねる(例: a = 100; s = "foobar";)
+・算術演算: 四則演算(+, -, *, /)のみ
+・制御構造: if文, if-else文, while文, goto文, gosub-return文
+            goto, gosubのラベルには「*」をつける
+            if文, if-else文, while文は{ }を省略できない
+・出力: print文
+・1行コメント: #から行末までコメント
+・その他: 文の最後はセミコロン「;」が必要
+
+サンプルコードはmil_sample内にあります。 
+
+

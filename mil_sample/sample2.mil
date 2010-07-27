@@ -1,0 +1,46 @@
+# MILのサンプル
+a = 10;
+b = (a + 100) * 10 / 2 - 20; # 算術演算は+, -, *, /のみ
+hello = "Hello, world"; # 文字列型のデータ
+print(hello); # print文で文字列を出力
+print(b);
+
+i = 0;
+while (i < 5) { # while文とif~else文は{ }を省略できない
+  if (i <= 2) {
+    print("foo");
+  }
+  else {
+    print("bar");
+  }
+  i = i + 1;
+}
+
+goto *label; # goto文でラベルへジャンプする
+print("これは出力されない");
+
+*label
+  print("gotoでジャンプ！");
+  gosub *fib; # gosub文でサブルーチンのラベルへジャンプする
+  print("returnで戻ってきました");
+  goto *end;
+
+*fib # サブルーチン(フィボナッチ数列を計算)
+  f0 = 0;
+  f1 = 1;
+  f2 = 0;
+  print(f1);
+  while (1) {
+    f2 = f1 + f0;
+    if (f2 > 100) {
+      goto *ret;
+    }
+    print(f2);
+    f0 = f1;
+    f1 = f2;
+  }
+  *ret
+    return; # return文でサブルーチンから戻る
+
+*end
+
